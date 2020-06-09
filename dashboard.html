@@ -9,7 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-  <script src="js/validators.js"></script>
+  <script src="js/main.js"></script>
 
 
 </head>
@@ -66,12 +66,51 @@
         <ul class="nav nav-pills nav-stacked">
           <li class="list-group-item" onclick="editarUsuario()">Editar infos</li>
         </ul><br>
+        <ul class="nav nav-pills nav-stacked">
+          <li class="list-group-item" onclick="cadEntradas()">
+            Cadastrar Entrada
+          </li>
+        </ul>
+        <br>
+        <ul class="nav nav-pills nav-stacked">
+          <li class="list-group-item">
+            Cadastrar Saída
+          </li>
+        </ul>
       </div>
       <br>
 
-    </div>
-  </div>
-  </div>
+      <div class="col-sm-9">
+        <div class="well">
+          <div class="card-header" style="font-size: 20px;">Saldo</div>
+          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="Saldo"></label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-sm-9">
+        <div class="well">
+          <div class="card-header" style="font-size: 20px;">Entradas</div>
+          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="Entradas"></label>
+            <div class="">
+              <button type="button" id="viewEntradas"hidden><a href="entradas.html"> Vizualizar entradas </a></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-9">
+        <div class="well">
+          <div class="card-header" style="font-size: 20px;">Saídas</div>
+          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="quantProd">0</label>
+          </div>
+        </div>
 </body>
 
 </html>
+
+<script>
+  getSaldo();
+  listEntradas();
+</script>
