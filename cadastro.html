@@ -3,82 +3,77 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://kit.fontawesome.com/580d16720b.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
     <title>Cadastro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="js/validators.js"></script>
 </head>
 
 <body>
     <div class="container">
-        <center>
-            <label>Cadastrar</label>
-            <input type="text" id="nome" class="form-control" placeholder="Nome" style="width: 355px;" />
-            <br>
-            <input type="text" id="email" class="form-control" placeholder="E-mail" style="width: 355px;" />
-            <br>
-            <input type="text" id="senha" class="form-control" placeholder="Senha" style="width: 355px;" />
-            <br>
-            <input type="text" id="telefone" class="form-control" placeholder="Telefone" style="width: 355px;" />
-            <br>
-            <input type="text" id="cep" class="form-control" placeholder="CEP" style="width: 355px;" />
-            <br>
-            <button type="button" class="btn btn-outline-success btn-block"
-                onclick="validarCadastro(nome.value,email.value,senha.value,telefone.value,cep.value)">Cadastrar</button>
-            <br>
-            <button type="button" class="btn btn-outline-danger btn-block" onclick="">Voltar</button>
-        </center>
+        <div class="img">
+            <img src="img/sign_in.svg">
+        </div>
+        <div class="login_container">
+            <form action="index.html">
+                <img class="avatar" src="img/avatar.svg">
+                <h2>Cadastre-se</h2>
+                <div class="input-div one focus">
+                    <div class="i">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h5>E-mail</h5>
+                        <input class="input" type="email" id="email">
+                    </div>
+                </div>
+                <div class="input-div two focus">
+                    <div class="i">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div>
+                        <h5>Senha</h5>
+                        <input class="input" type="password" id="password">
+                    </div>
+                </div>
+                <div class="input-div two focus">
+                    <div class="i">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div>
+                        <h5>Nome</h5>
+                        <input class="input" type="text" id="nome">
+                    </div>
+                </div>
+                <div class="input-div two focus">
+                    <div class="i">
+                        <i class="fa fa-phone"></i>
+                    </div>
+                    <div>
+                        <h5>Telefone</h5>
+                        <input class="input" type="text" id="phone">
+                    </div>
+                </div>
+                <div class="input-div two focus">
+                    <div class="i">
+                        <i class="fa fa-sort-numeric-asc"></i>
+                    </div>
+                    <div>
+                        <h5>CEP</h5>
+                        <input class="input" type="text" id="cep">
+                    </div>
+                </div>
+                <button class="btn btn-info"
+                    onclick="Register(nome.value,email.value,phone.value,cep.value,password.value)">Cadastrar</button>
+            </form>
+        </div>
     </div>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </html>
