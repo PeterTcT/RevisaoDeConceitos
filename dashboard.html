@@ -1,116 +1,111 @@
 <!DOCTYPE html>
-<html lang="ptbr">
+<html lang="pt-br">
 
 <head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-  <script src="js/main.js"></script>
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/card.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
+    <script src="https://kit.fontawesome.com/580d16720b.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="js/main.js"></script>
+    <title>Dashboard</title>
 </head>
-
-<style>
-  /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-  .row.content {
-    height: 550px
-  }
-
-  .list-group-item {
-    color: #fff;
-    background-color: #337ab7;
-    border-radius: 4px;
-  }
-
-  /* Set gray background color and 100% height */
-  .sidenav {
-    background-color: #f1f1f1;
-    height: 100%;
-  }
-
-  /* On small screens, set height to 'auto' for the grid */
-  @media screen and (max-width: 767px) {
-    .row.content {
-      height: auto;
-    }
-  }
-</style>
 
 <body>
 
-  <nav class="navbar navbar-inverse visible-xs">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <ul class="nav navbar-nav">
-          <li onclick="editarUsuario()"><a href="#">Editar infos</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <input type="checkbox" id="check">
 
-  <div class="container-fluid">
-    <div class="row content">
-      <div class="col-sm-3 sidenav hidden-xs">
-        <h2><a href="dashboard.html">Tela Principal</a></h2>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="list-group-item" onclick="editarUsuario()">Editar infos</li>
-        </ul><br>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="list-group-item" onclick="cadEntradas()">
-            Cadastrar Entrada
-          </li>
-        </ul>
-        <br>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="list-group-item">
-            Cadastrar Saída
-          </li>
-        </ul>
-      </div>
-      <br>
-
-      <div class="col-sm-9">
-        <div class="well">
-          <div class="card-header" style="font-size: 20px;">Saldo</div>
-          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="Saldo"></label>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="col-sm-9">
-        <div class="well">
-          <div class="card-header" style="font-size: 20px;">Entradas</div>
-          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="Entradas"></label>
-            <div class="">
-              <button type="button" id="viewEntradas"hidden><a href="entradas.html"> Vizualizar entradas </a></button>
+    <header>
+        <label for="check">
+            <i class="fas fa-bars" id="sidebar_btn"></i>
+        </label>
+        <!--
+            <div class="left_area">
+                <h3>Controle <span>Financeiro</span></h3>
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="right_area">
+                <a href="#" class="logout_btn">Logout</a>
+            </div>
+            -->
+    </header>
 
-      <div class="col-sm-9">
-        <div class="well">
-          <div class="card-header" style="font-size: 20px;">Saídas</div>
-          <div class="card-body" style="text-align: center; font-size: 40px;"><label id="quantProd">0</label>
-          </div>
+    <div class="sidebar">
+        <center>
+            <div class="left_area">
+                <h3>Controle <span>Financeiro</span></h3>
+            </div>
+            <img src="img/avatar.svg" class="profile_image" alt="avatar">
+            <h4>Bem-Vindo</h4>
+        </center>
+        <a href="#" type="button" onclick="editUser()"><i class="fas fa-user-edit"></i><span>Editar
+                Informações</span></a>
+        <a href="#" type="button" onclick="registerCategory()"><i class="fas fa-list-ul"></i><span>Cadastrar
+                Categoria</span></a>
+        <a href="#" type="button" onclick="registerEntry()"><i class="fas fa-plus-square"></i><span>Cadastrar
+                Entradas</span></a>
+        <a href="#" type="button" onclick="goTo('entradas.html')"><i class="fas fa-eye"></i><span>Vizualizar
+                Entradas</span></a>
+        <a href="#" type="button" onclick="registerExit()"><i class="fas fa-minus-square"></i><span>Cadastrar
+                Saídas</span></a>
+        <a href="#" type="button" onclick="goTo('saidas.html')"><i class="fas fa-eye"></i><span>Vizualizar
+                Saídas</span></a>
+    </div>
+
+
+    <!-- Card ENTRADA-->
+
+    <div class="card-body color1" style="margin-top: 70px; margin-left: 255px;">
+        <div class="float-left">
+            <h3>
+                <span class="currency">R$</span>
+                <span class="count" id="entriesQuant">0</span>
+            </h3>
+            <p>Entradas</p>
         </div>
+        <div class="float-right">
+            <i class="pe-7s-plus"></i>
+        </div>
+    </div>
+
+    <!-- Card SALDO-->
+    <div class="card-body color2">
+        <div class="float-left">
+            <h3>
+                <span class="currency">R$</span>
+                <span class="count" id="balance">0</span>
+            </h3>
+            <p>Saldo</p>
+        </div>
+        <div class="float-right">
+            <i class="pe-7s-cash"></i>
+        </div>
+    </div>
+
+    <!-- Card SAÍDA-->
+    <div class="card-body color3" style="margin-left: 255px;">
+        <div class="float-left">
+            <h3>
+                <span class="currency">R$</span>
+                <span class="count" id="exitsQuant">0</span>
+            </h3>
+            <p>Saída</p>
+        </div>
+        <div class="float-right">
+            <i class="pe-7s-less"></i>
+        </div>
+    </div>
 </body>
 
 </html>
 
 <script>
-  getSaldo();
-  listEntradas();
+    getUserFinances();
 </script>
