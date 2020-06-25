@@ -23,7 +23,8 @@ async function Register(name, email, phone, cep, password) {
     alert("Cadastro efetuado com sucesso!");
   }
 }
-function getAdress(cep) {
+async function getAdress(cep) {
+
   const request = new Request(`http://viacep.com.br/ws/${cep}/json/`);
   try {
     debugger;
