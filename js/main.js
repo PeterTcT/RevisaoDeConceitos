@@ -53,7 +53,6 @@ function Login(email, password) {
     });
   } else {
     let user = getUser();
-    debugger;
     if (user.email == email && user.password == password) {
       Swal.fire({
         icon: "success",
@@ -223,6 +222,7 @@ function setEntry(user, indexCategorie, categories) {
         entries.push({
           id: Date.now(),
           category: categories[indexCategorie],
+          date: getDateNow(),
           value: document.getElementById("entry").value,
         });
         user.entries = entries;
@@ -303,6 +303,7 @@ function setExit(user, indexCategorie, categories) {
         exits.push({
           id: Date.now(),
           category: categories[indexCategorie],
+          date: getDateNow(),
           value: document.getElementById("exit").value,
         });
         user.exits = exits;
@@ -324,7 +325,6 @@ function updateBalance(user, isEntry) {
   let totalExits = 0;
 
   if (isEntry) {
-    debugger;
     if (userEntrie.length == 1) totalEntrie = parseFloat(userEntrie[0].value);
     else totalEntrie = parseFloat(userEntrie[userEntrie.length - 1].value);
     user.balance += totalEntrie;
@@ -359,8 +359,28 @@ function getUserFinances() {
   chartMaker();
 }
 
+function getDateNow() {
+  const date = new Date();
+  const meses = [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+  ];
+  const ano = date.getFullYear();
+  const dia = date.getDate();
+  return dia + "/" + meses[date.getMonth()] + "/" + ano;
+}
+
 function viewEntries() {
-  let date = new Date();
   let user = getUser();
   if (user.entries == null) {
     Swal.fire({
@@ -380,21 +400,19 @@ function viewEntries() {
         entrie.value +
         "</span>" +
         "</h3>" +
-        "<p>" +
+        "Categoria: " +
         entrie.category +
-        "</p>" +
-        "<p>" +
-        "";
-      "</p>" +
+        "<br>" +
+        "<label>" +
+        "Data de adição: " +
+        entrie.date +
+        "</label>" +
         "</div>" +
         "<div class='float-right'>" +
         "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
         "</div>";
     });
-
-    chartMaker_entries();
-    data();
   }
 }
 
@@ -417,6 +435,7 @@ function viewExits() {
         "<p>" +
         exit.category +
         "</p>" +
+        exit.date +
         "</div>" +
         "<div class='float-right'>" +
         "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
@@ -424,16 +443,13 @@ function viewExits() {
         "</div>";
     });
   }
-  chartMaker_exit();
 }
 
 function chartMaker() {
   const user = getUser();
   entries = _totalEntriesChart(user.entries);
   exits = _totalExitsChart(user.exits);
-  debugger;
   const ctx = document.getElementById("mChart").getContext("2d");
-  debugger;
   let comparissonChart = new Chart(ctx, {
     type: "doughnut",
     data: {
