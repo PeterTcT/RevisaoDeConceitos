@@ -17,14 +17,20 @@ async function Register(name, email, phone, cep, password) {
   ) {
     alert("Campos Vazios!");
   } else {
-    const adress = await getAdress(cep);
-    let data = RegisterToJson(name, email, phone, adress, password);
-    localStorage.setItem("User", data);
-    alert("Cadastro efetuado com sucesso!");
+    if (cep < 8) {
+      alert('Cep inválido')
+    }
+    else if (cep.includes('-')) {
+      alert('Por favor tire o tracinho do cep :)');
+    } else {
+      const adress = await getAdress(cep);
+      let data = RegisterToJson(name, email, phone, adress, password);
+      localStorage.setItem("User", data);
+      alert("Cadastro efetuado com sucesso!");
+    }
   }
 }
-async function getAdress(cep) {
-
+function getAdress(cep) {
   const request = new Request(`http://viacep.com.br/ws/${cep}/json/`);
   try {
     const teste = fetch(request)
@@ -355,7 +361,6 @@ function getUserFinances() {
   let balance = user.balance;
   document.getElementById("entriesQuant").innerHTML = entries == undefined ? 0 : entries;
   document.getElementById("balance").innerHTML = balance;
-  debugger; 
   balance < 0 ? document.getElementById("balance").style.color = '#ff0000' : '#00ff00';
   document.getElementById("exitsQuant").innerHTML = exits == undefined ? 0 : exits;
 
