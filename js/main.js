@@ -27,7 +27,6 @@ async function getAdress(cep) {
 
   const request = new Request(`http://viacep.com.br/ws/${cep}/json/`);
   try {
-    debugger;
     const teste = fetch(request)
       .then((response) => {
         if (response.ok) {
@@ -54,7 +53,6 @@ function Login(email, password) {
     });
   } else {
     let user = getUser();
-    debugger;
     if (user.email == email && user.password == password) {
       Swal.fire({
         icon: "success",
@@ -325,7 +323,6 @@ function updateBalance(user, isEntry) {
   let totalExits = 0;
 
   if (isEntry) {
-    debugger;
     if (userEntrie.length == 1) totalEntrie = parseFloat(userEntrie[0].value);
     else totalEntrie = parseFloat(userEntrie[userEntrie.length - 1].value);
     user.balance += totalEntrie;
@@ -335,35 +332,26 @@ function updateBalance(user, isEntry) {
     user.balance -= totalExits;
   }
   localStorage.setItem("User", JSON.stringify(user));
-  getUserFinances();
+  if (document.URL.includes('dashboard.html'))
+    getUserFinances();
 }
 function getUserFinances() {
   let user = getUser();
-  let entries = 0;
-  let exits = 0;
+  let entries = _totalExits(user.entries);
+  let exits = _totalExits(user.exits);
   let balance = user.balance;
-  if (user.entries != null) {
-    user.entries.forEach((entry) => {
-      entries += parseFloat(entry.value);
-    });
-  }
-
-  if (user.exits != null) {
-    user.exits.forEach((exit) => {
-      exits += parseFloat(exit.value);
-    });
-  }
-  document.getElementById("entriesQuant").innerHTML = entries;
+  document.getElementById("entriesQuant").innerHTML = entries == undefined ? 0 : entries;
   document.getElementById("balance").innerHTML = balance;
-  document.getElementById("exitsQuant").innerHTML = exits;
+  document.getElementById("exitsQuant").innerHTML = exits == undefined ? 0 : exits;
 
   chartMaker();
 }
 
 function viewEntries() {
+  document.getElementById('entries').innerHTML = '';
   let date = new Date();
   let user = getUser();
-  if (user.entries == null) {
+  if (user.entries == null || user.entries.length == 0) {
     Swal.fire({
       icon: "error",
       title: "Nenhuma entrada registrada!",
@@ -385,13 +373,12 @@ function viewEntries() {
         entrie.category +
         "</p>" +
         "<p>" +
-        "";
-      "</p>" +
+        "</p>" +
         "</div>" +
         "<div class='float-right'>" +
-        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
+        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;' onclick='deleteEntrie(" + entrie.id + ")'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
-        "</div>";
+        "</div>"
     });
 
     chartMaker_entries();
@@ -399,9 +386,22 @@ function viewEntries() {
   }
 }
 
+function deleteEntrie(entrieId) {
+  const user = getUser();
+  const userEntries = user.entries;
+  const indexToRemove = userEntries.find((entrie, i) => {
+    return entrie.id == entrieId;
+  });
+  userEntries.splice(userEntries.indexOf(indexToRemove), 1);
+  localStorage.setItem('User', JSON.stringify(user));
+  updateBalance(user, true);
+  viewEntries();
+}
+
 function viewExits() {
+  document.getElementById('exits').innerHTML = '';
   let user = getUser();
-  if (user.exits == null) {
+  if (user.exits == null || user.exits.length == 0) {
     alert("Nenhuma saída registrada");
     goTo("dashboard.html");
   } else {
@@ -420,7 +420,7 @@ function viewExits() {
         "</p>" +
         "</div>" +
         "<div class='float-right'>" +
-        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
+        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'  onclick='deleteExit(" + exit.id + ")'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
         "</div>";
     });
@@ -428,13 +428,23 @@ function viewExits() {
   chartMaker_exit();
 }
 
+function deleteExit(exitId) {
+  const user = getUser();
+  const userExits = user.exits;
+  const indexToRemove = userExits.find((exit, i) => {
+    return exit.id == exitId;
+  });
+  userExits.splice(userExits.indexOf(indexToRemove), 1);
+  localStorage.setItem('User', JSON.stringify(user));
+  updateBalance(user, false);
+  viewExits();
+}
+
 function chartMaker() {
   const user = getUser();
-  entries = _totalEntriesChart(user.entries);
-  exits = _totalExitsChart(user.exits);
-  debugger;
+  entries = _totalEntries(user.entries);
+  exits = _totalExits(user.exits);
   const ctx = document.getElementById("mChart").getContext("2d");
-  debugger;
   let comparissonChart = new Chart(ctx, {
     type: "doughnut",
     data: {
@@ -458,70 +468,22 @@ function chartMaker() {
   return comparissonChart;
 }
 
-/*// !gráfico saída
-function chartMaker_exit() {
-  const user = getUser();
-  exits = _totalExitsChart(user.exits);
-  const ctx = document.getElementById("mChart").getContext("2d");
-  let comparissonChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: ["Saídas"],
-      options: {
-        responsive: true,
-      },
-      datasets: [
-        {
-          label: "Comparação das saídas",
-          data: [exit],
-          backgroundColor: ["rgba(251,113,70)"],
-        },
-      ],
-    },
-  });
-  return comparissonChart;
-}
-
-// !gráfico entrada
-function chartMaker_entries() {
-  const user = getUser();
-  entries = _totalEntriesChart(user.entries);
-  const ctx = document.getElementById("mChart").getContext("2d");
-  let comparissonChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: ["Entrada"],
-      options: {
-        responsive: true,
-      },
-      datasets: [
-        {
-          label: "Comparação das entradas",
-          data: [entries],
-          backgroundColor: ["rgba(0,194,146)"],
-        },
-      ],
-    },
-  });
-  return comparissonChart;
-}
-*/
-function _totalEntriesChart(entries) {
-  if (entries != null) {
+function _totalEntries(entries) {
+  if (entries != null && entries.length != 0) {
     if (entries.length == 1) return entries.value;
     else
       return entries.reduce(
-        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value)
+        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value == undefined ? acc : acc.value)
       );
   }
 }
 
-function _totalExitsChart(exits) {
-  if (exits != null) {
+function _totalExits(exits) {
+  if (exits != null && exits.length != 0) {
     if (exits.length == 1) return exits.value;
     else
       return exits.reduce(
-        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value)
+        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value == undefined ? acc : acc.value)
       );
   }
 }
