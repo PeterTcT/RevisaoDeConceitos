@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="css/card.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
-    <link href="css/dashboard.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+    <script src="https://kit.fontawesome.com/580d16720b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="js/main.js"></script>
     <title>Saídas</title>
@@ -19,7 +21,7 @@
 
 <body>
 
-    <!--  <input type="checkbox" id="check">
+    <input type="checkbox" id="check">
 
     <header>
         <label for="check">
@@ -43,12 +45,17 @@
                 Entradas</span></a>
         <a href="#" type="button" onclick="registerExit()"><i class="fas fa-minus-square"></i><span>Cadastrar
                 Saídas</span></a>
-    </div
-        -->
-    <div id="exits">
-
     </div>
+    <div class="content">
+        <div class="column">
+            <div id="exits" style="margin-top: 60px;">
 
+            </div>
+        </div>
+    </div>
+    <div class="container" style="width: 64%; margin-top: -210px; margin-left: 100px;">
+        <canvas id="mChart" style="margin-left: 150px; "></canvas>
+    </div>
 </body>
 
 </html>

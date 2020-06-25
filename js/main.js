@@ -2,7 +2,7 @@ function goTo(page) {
   window.location = page;
 }
 
-function Register(name, email, phone, cep, password) {
+async function Register(name, email, phone, cep, password) {
   if (
     name == "" ||
     name == null ||
@@ -17,12 +17,32 @@ function Register(name, email, phone, cep, password) {
   ) {
     alert("Campos Vazios!");
   } else {
-    let data = RegisterToJson(name, email, phone, cep, password);
+    const adress = await getAdress(cep);
+    let data = RegisterToJson(name, email, phone, adress, password);
     localStorage.setItem("User", data);
     alert("Cadastro efetuado com sucesso!");
   }
 }
-
+function getAdress(cep) {
+  const request = new Request(`http://viacep.com.br/ws/${cep}/json/`);
+  try {
+    debugger;
+    const teste = fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Server response wasn't OK");
+        }
+      })
+      .then((json) => {
+        return json;
+      });
+    return teste;
+  } catch (e) {
+    alert(e);
+  }
+}
 function Login(email, password) {
   if (email == "" || email == null || password == "" || password == null) {
     Swal.fire({
@@ -55,13 +75,15 @@ function Login(email, password) {
   }
 }
 
-function RegisterToJson(name, email, phone, cep, password) {
+function RegisterToJson(name, email, phone, adress, password) {
   const data = {
     id: Date.now(),
     name: name,
     email: email,
     phone: phone,
-    cep: cep,
+    street: adress["logradouro"],
+    neighborhood: adress["bairro"],
+    uf: adress["uf"],
     password: password,
     status: "active",
     categories: null,
@@ -77,49 +99,44 @@ function editUser() {
     title:
       '<h2 style="color: black; font-family: Toma Sans;">Editar informações</h2>',
     html:
-      "<label style='font-family: Toma Sans; font-weight: bold;'>" +
-      "NOME: " +
-      "</label>" +
-      '<input id="name" style="color: black; font-family: Toma Sans;" type="text" placeholder="Nome"  value=' +
-      user.name +
-      '  style="color: white" class="swal2-input">' +
-      "<label style='font-family: Toma Sans; font-weight: bold;'>" +
-      "EMAIL:" +
-      "</label>" +
-      '<input id="email" style="color: black; font-family: Toma Sans;" type="email" placeholder="Email" value=' +
-      user.email +
-      '  style="color: white"  class="swal2-input">' +
-      "<label style='font-family: Toma Sans; font-weight: bold;'>" +
-      "TELEFONE:" +
-      "</label>" +
-      '<input id="phone" style="color: black; font-family: Toma Sans;" type="text" placeholder="Telefone" value=' +
-      user.phone +
-      ' style="color: white"  class="swal2-input">' +
-      "<label style='font-family: Toma Sans; font-weight: bold;'>" +
-      "CEP:" +
-      "</label>" +
-      '<input id="cep" style="color: black; font-family: Toma Sans;" type="text" placeholder="Cep" value=' +
-      user.cep +
-      ' style="color: white"  type="email" class="swal2-input">' +
-      "<label style='font-family: Toma Sans; font-weight: bold;'>" +
-      "SENHA:" +
-      "</label>" +
-      '<input id="password" style="color: black;" type="password" placeholder="Senha" value=' +
-      user.password +
-      ' style="color: white" class="swal2-input">',
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Nome </label>" +
+      `<input id="name" style="color: black; font-family: Toma Sans;" type="text"   value='${user.name}' 
+       style="color: white" class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Email </label>" +
+      `<input id="email" style="color: black; font-family: Toma Sans;" type="email"  value='${user.email}' 
+       style="color: white"  class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Telefone </label>" +
+      `<input id="phone" style="color: black; font-family: Toma Sans;" type="text"  value='${user.phone}' 
+       style="color: white"  class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Estado </label>" +
+      `<input id="uf" style="color: black; font-family: Toma Sans;" type="text"  value='${user.uf}' 
+      style="color: white"  class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Bairro </label>" +
+      `<input id="neighborhood" style="color: black; font-family: Toma Sans;" type="text"  value='${user.neighborhood}' 
+      style="color: white"  class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Rua </label>" +
+      `<input id="street" style="color: black; font-family: Toma Sans;" type="text"  value='${user.street}' 
+      style="color: white"  type="email" class="swal2-input">` +
+      "<label style='font-family: Toma Sans; font-weight: bold;'> Senha </label>" +
+      `<input id="password" style="color: black;" type="password" value='${user.password}' 
+      style="color: white" class="swal2-input">`,
     focusConfirm: false,
     showCancelButton: true,
     preConfirm: () => {
       user.name = document.getElementById("name").value;
       user.email = document.getElementById("email").value;
       user.phone = document.getElementById("phone").value;
-      user.cep = document.getElementById("cep").value;
+      user.uf = document.getElementById("uf").value;
+      user.neighborhood = document.getElementById("neighborhood").value;
+      user.street = document.getElementById("street").value;
       user.password = document.getElementById("password").value;
       localStorage.setItem("User", JSON.stringify(user));
       if (
         user.name == "" ||
         user.phone == "" ||
-        user.cep == "" ||
+        user.uf == "" ||
+        user.neighborhood == "" ||
+        user.street == "" ||
         user.email == "" ||
         user.password == ""
       ) {
@@ -301,24 +318,24 @@ function setExit(user, indexCategorie, categories) {
 }
 
 function updateBalance(user, isEntry) {
-  if (isEntry) {
-    let entrie = 0;
-    user.entries.forEach((entry) => {
-      entrie += parseFloat(entry.value);
-    });
-    user.balance += entrie;
-  } else {
-    let exit = 0;
-    user.exits.forEach((exits) => {
-      exit += parseFloat(exits.value);
-    });
-    user.balance -= exit;
-  }
+  const userEntrie = user.entries;
+  const userExits = user.exits;
+  let totalEntrie = 0;
+  let totalExits = 0;
 
+  if (isEntry) {
+    debugger;
+    if (userEntrie.length == 1) totalEntrie = parseFloat(userEntrie[0].value);
+    else totalEntrie = parseFloat(userEntrie[userEntrie.length - 1].value);
+    user.balance += totalEntrie;
+  } else {
+    if (userExits.length == 1) totalExits = parseFloat(userExits[0].value);
+    else totalExits = parseFloat(userExits[userExits.length - 1].value);
+    user.balance -= totalExits;
+  }
   localStorage.setItem("User", JSON.stringify(user));
   getUserFinances();
 }
-
 function getUserFinances() {
   let user = getUser();
   let entries = 0;
@@ -338,9 +355,12 @@ function getUserFinances() {
   document.getElementById("entriesQuant").innerHTML = entries;
   document.getElementById("balance").innerHTML = balance;
   document.getElementById("exitsQuant").innerHTML = exits;
+
+  chartMaker();
 }
 
 function viewEntries() {
+  let date = new Date();
   let user = getUser();
   if (user.entries == null) {
     Swal.fire({
@@ -363,12 +383,18 @@ function viewEntries() {
         "<p>" +
         entrie.category +
         "</p>" +
+        "<p>" +
+        "";
+      "</p>" +
         "</div>" +
         "<div class='float-right'>" +
-        "<i class='pe-7s-plus'></i>" +
+        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
         "</div>";
     });
+
+    chartMaker_entries();
+    data();
   }
 }
 
@@ -393,16 +419,114 @@ function viewExits() {
         "</p>" +
         "</div>" +
         "<div class='float-right'>" +
-        "<i class='pe-7s-less'></i>" +
+        "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
         "</div>";
     });
   }
+  chartMaker_exit();
+}
+
+function chartMaker() {
+  const user = getUser();
+  entries = _totalEntriesChart(user.entries);
+  exits = _totalExitsChart(user.exits);
+  debugger;
+  const ctx = document.getElementById("mChart").getContext("2d");
+  debugger;
+  let comparissonChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Entrada", "Saldo", "Saída"],
+      options: {
+        responsive: true,
+      },
+      datasets: [
+        {
+          label: "Comparação de entradas e saídas",
+          data: [entries, user.balance, exits],
+          backgroundColor: [
+            "rgba(0,194,146)",
+            "rgba(3,169,243)",
+            "rgba(251,113,70)",
+          ],
+        },
+      ],
+    },
+  });
+  return comparissonChart;
+}
+
+/*// !gráfico saída
+function chartMaker_exit() {
+  const user = getUser();
+  exits = _totalExitsChart(user.exits);
+  const ctx = document.getElementById("mChart").getContext("2d");
+  let comparissonChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Saídas"],
+      options: {
+        responsive: true,
+      },
+      datasets: [
+        {
+          label: "Comparação das saídas",
+          data: [exit],
+          backgroundColor: ["rgba(251,113,70)"],
+        },
+      ],
+    },
+  });
+  return comparissonChart;
+}
+
+// !gráfico entrada
+function chartMaker_entries() {
+  const user = getUser();
+  entries = _totalEntriesChart(user.entries);
+  const ctx = document.getElementById("mChart").getContext("2d");
+  let comparissonChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Entrada"],
+      options: {
+        responsive: true,
+      },
+      datasets: [
+        {
+          label: "Comparação das entradas",
+          data: [entries],
+          backgroundColor: ["rgba(0,194,146)"],
+        },
+      ],
+    },
+  });
+  return comparissonChart;
+}
+*/
+function _totalEntriesChart(entries) {
+  if (entries != null) {
+    if (entries.length == 1) return entries.value;
+    else
+      return entries.reduce(
+        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value)
+      );
+  }
+}
+
+function _totalExitsChart(exits) {
+  if (exits != null) {
+    if (exits.length == 1) return exits.value;
+    else
+      return exits.reduce(
+        (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value)
+      );
+  }
 }
 
 function getUser() {
-  const data = JSON.parse(localStorage.getItem("User"));
-  return data;
+  return JSON.parse(localStorage.getItem("User"));
 }
 
 function categoriesToJson(categories) {

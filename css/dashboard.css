@@ -126,37 +126,20 @@ label #sidebar_btn:hover {
 #check {
   display: none;
 }
-
 .content {
   margin-left: 250px;
-}
-
-/*
-body {
-  background-color: black;
-}
-
-.card {
-  width: 20%;
   height: 100vh;
+  transition: 0.5s;
 }
 
-li {
-  margin-top: 20px;
-  font-family: 'Exo', sans-serif;
-}
-
-#lightSideBar {
-  background-color: white;
-  height: 100%;
-  width: 230px;
-  position: fixed;
-  margin-top: 0;
-  margin-left: 0;
-  padding-top: 10px;
-}
-
-.content{
+.content .one {
   margin-left: 250px;
-  height: auto;
-}*/
+  height: 100vh;
+  transition: 0.5s;
+}
+
+#check:checked ~ .content {
+  margin-left: 60px;
+}
+
+/*graphics*/

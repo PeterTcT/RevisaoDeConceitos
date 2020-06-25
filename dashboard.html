@@ -15,11 +15,12 @@
     <script src="https://kit.fontawesome.com/580d16720b.js" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script src="js/main.js"></script>
     <title>Dashboard</title>
 </head>
 
-<body>
+<iv>
 
     <input type="checkbox" id="check">
 
@@ -59,50 +60,65 @@
                 Saídas</span></a>
     </div>
 
-
-    <!-- Card ENTRADA-->
-
-    <div class="card-body color1" style="margin-top: 70px; margin-left: 255px;">
-        <div class="float-left">
-            <h3>
-                <span class="currency">R$</span>
-                <span class="count" id="entriesQuant">0</span>
-            </h3>
-            <p>Entradas</p>
+    <div class="content">
+        <!-- Card ENTRADA-->
+        <div class="column">
+            <div class="card-body color1" style="margin-top: 70px;">
+                <div class=" float-left">
+                    <h3>
+                        <span class="currency">R$</span>
+                        <span class="count" id="entriesQuant">0</span>
+                        <span class="data" id="date"></span>
+                    </h3>
+                    <p>Entradas</p>
+                </div>
+                <div class="float-right">
+                    <i class="pe-7s-plus"></i>
+                </div>
+            </div>
         </div>
-        <div class="float-right">
-            <i class="pe-7s-plus"></i>
+
+        <!-- Card SALDO-->
+        <div class="column">
+            <div class="card-body color2">
+                <div class="float-left">
+                    <h3>
+                        <span class="currency">R$</span>
+                        <span class="count" id="balance">0</span>
+                    </h3>
+                    <p>Saldo</p>
+                </div>
+                <div class="float-right">
+                    <i class="pe-7s-cash"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card SAÍDA-->
+        <div class="column">
+            <div class="card-body color3">
+                <div class="float-left">
+                    <h3>
+                        <span class="currency">R$</span>
+                        <span class="count" id="exitsQuant">0</span>
+                    </h3>
+                    </h3>
+                    <p>Saída</p>
+                </div>
+                <div class="float-right">
+                    <i class="pe-7s-less"></i>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Card SALDO-->
-    <div class="card-body color2">
-        <div class="float-left">
-            <h3>
-                <span class="currency">R$</span>
-                <span class="count" id="balance">0</span>
-            </h3>
-            <p>Saldo</p>
-        </div>
-        <div class="float-right">
-            <i class="pe-7s-cash"></i>
+    <div class="content one" style="margin-top: -300px;">
+        <div class="container" style="width: 72%; height: 80vh;">
+            <canvas id="mChart" style="margin-left: -335px; "></canvas>
         </div>
     </div>
+    </body>
 
-    <!-- Card SAÍDA-->
-    <div class="card-body color3" style="margin-left: 255px;">
-        <div class="float-left">
-            <h3>
-                <span class="currency">R$</span>
-                <span class="count" id="exitsQuant">0</span>
-            </h3>
-            <p>Saída</p>
-        </div>
-        <div class="float-right">
-            <i class="pe-7s-less"></i>
-        </div>
-    </div>
-</body>
+
 
 </html>
 
