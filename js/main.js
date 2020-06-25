@@ -325,18 +325,29 @@ function updateBalance(user, isEntry) {
   let totalExits = 0;
 
   if (isEntry) {
-    if (userEntrie.length == 1) totalEntrie = parseFloat(userEntrie[0].value);
-    else totalEntrie = parseFloat(userEntrie[userEntrie.length - 1].value);
+    const userEntriesLength = userEntrie.length
+    if (userEntriesLength == 1) totalEntrie = parseFloat(userEntrie[0].value);
+    else totalEntrie = parseFloat(userEntrie[userEntriesLength != 1 ? userEntriesLength - 1 : 0].value);
     user.balance += totalEntrie;
   } else {
-    if (userExits.length == 1) totalExits = parseFloat(userExits[0].value);
-    else totalExits = parseFloat(userExits[userExits.length - 1].value);
+    const userExitsLength = userExits.length;
+    if (userExitsLength == 1) totalExits = parseFloat(userExits[0].value);
+    else totalExits = parseFloat(userExits[userExitsLength != 1 ? userExitsLength - 1 : 0].value);
     user.balance -= totalExits;
   }
   localStorage.setItem("User", JSON.stringify(user));
-  if (document.URL.includes('dashboard.html'))
-    getUserFinances();
+  getUserFinances();
 }
+
+
+function updateBalanceDelete(value, user) {
+  if (user.balance < 0)
+    user.balance += value;
+  else
+    user.balance -= value
+  localStorage.setItem("User", JSON.stringify(user));
+}
+
 function getUserFinances() {
   let user = getUser();
   let entries = _totalExits(user.entries);
@@ -344,6 +355,8 @@ function getUserFinances() {
   let balance = user.balance;
   document.getElementById("entriesQuant").innerHTML = entries == undefined ? 0 : entries;
   document.getElementById("balance").innerHTML = balance;
+  debugger; 
+  balance < 0 ? document.getElementById("balance").style.color = '#ff0000' : '#00ff00';
   document.getElementById("exitsQuant").innerHTML = exits == undefined ? 0 : exits;
 
   chartMaker();
@@ -375,11 +388,7 @@ function viewEntries() {
   let date = new Date();
   let user = getUser();
   if (user.entries == null || user.entries.length == 0) {
-    Swal.fire({
-      icon: "error",
-      title: "Nenhuma entrada registrada!",
-      timer: 1500,
-    });
+    alert("Nenhuma entrada registrada");
     goTo("dashboard.html");
   } else {
     user.entries.forEach((entrie) => {
@@ -405,18 +414,19 @@ function viewEntries() {
         "</div>" +
         "</div>"
     });
+    entriesChart();
   }
 }
 
 function deleteEntrie(entrieId) {
   const user = getUser();
   const userEntries = user.entries;
-  const indexToRemove = userEntries.find((entrie, i) => {
+  const valueToremove = userEntries.find((entrie) => {
     return entrie.id == entrieId;
   });
-  userEntries.splice(userEntries.indexOf(indexToRemove), 1);
+  updateBalanceDelete(parseFloat(valueToremove.value), user);
+  userEntries.splice(userEntries.indexOf(valueToremove), 1);
   localStorage.setItem('User', JSON.stringify(user));
-  updateBalance(user, true);
   viewEntries();
 }
 
@@ -440,34 +450,39 @@ function viewExits() {
         "<p>" +
         exit.category +
         "</p>" +
+        "<label>" +
+        "Data de adição: " +
         exit.date +
+        "</label>" +
         "</div>" +
         "<div class='float-right'>" +
         "<button type='button' class='btn btn-outline-danger' style='width: 60px; height: 50px;'  onclick='deleteExit(" + exit.id + ")'><img src='img/criss_cross.svg' alt='delete' style='width: 30px;'></i></button>" +
         "</div>" +
         "</div>";
     });
+    exitChart();
   }
+
 }
 
 function deleteExit(exitId) {
   const user = getUser();
   const userExits = user.exits;
-  const indexToRemove = userExits.find((exit, i) => {
+  const valueToremove = userExits.find((exit, i) => {
     return exit.id == exitId;
   });
-  userExits.splice(userExits.indexOf(indexToRemove), 1);
+  updateBalanceDelete(parseFloat(valueToremove.value), user);
+  userExits.splice(userExits.indexOf(valueToremove), 1);
   localStorage.setItem('User', JSON.stringify(user));
-  updateBalance(user, false);
   viewExits();
 }
 
 function chartMaker() {
   const user = getUser();
-  entries = _totalEntries(user.entries);
-  exits = _totalExits(user.exits);
+  const entries = _totalEntries(user.entries);
+  const exits = _totalExits(user.exits);
   const ctx = document.getElementById("mChart").getContext("2d");
-  let comparissonChart = new Chart(ctx, {
+  const comparissonChart = new Chart(ctx, {
     type: "doughnut",
     data: {
       labels: ["Entrada", "Saldo", "Saída"],
@@ -490,9 +505,104 @@ function chartMaker() {
   return comparissonChart;
 }
 
+function exitChart() {
+  const user = getUser();
+  const userExits = user.exits
+  const ctx = document.getElementById("mChart").getContext("2d");
+  const labeArr = getExitsDescription(userExits);
+  const values = getExitsValues(userExits);
+  const colors = getExitsColors(userExits);
+  const comparissonChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labeArr,
+      options: {
+        responsive: true,
+      },
+      datasets: [
+        {
+          label: "Comparação entre saídas",
+          data: values,
+          backgroundColor: colors,
+        },
+      ],
+    },
+  });
+  return comparissonChart;
+}
+
+function getExitsDescription(exits) {
+  const arr = [];
+  exits.forEach((exit) => arr.push(exit.category + " " + exit.date));
+  return arr;
+}
+
+function getExitsValues(exits) {
+  const arr = [];
+  exits.forEach((exit) => arr.push(parseFloat(exit.value)));
+  return arr;
+}
+
+function getExitsColors(exits) {
+  const arr = [];
+  const red = "rgba(251,113,70)";
+  exits.forEach((_) =>
+    arr.push(red));
+  return arr;
+}
+
+
+function entriesChart() {
+  const user = getUser();
+  const userEntries = user.entries
+  const ctx = document.getElementById("mChart").getContext("2d");
+  const labeArr = getEntriesDescription(userEntries);
+  const values = getEntriesValues(userEntries);
+  const colors = getEntriesColors(userEntries);
+  const comparissonChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labeArr,
+      options: {
+        responsive: true,
+      },
+      datasets: [
+        {
+          label: "Comparação entre entradas",
+          data: values,
+          backgroundColor: colors,
+        },
+      ],
+    },
+  });
+  return comparissonChart;
+}
+
+function getEntriesDescription(entries) {
+  const arr = [];
+  entries.forEach((entrie) => arr.push(entrie.category + " " + entrie.date));
+  return arr;
+}
+
+function getEntriesValues(entries) {
+  const arr = [];
+  entries.forEach((entrie) => arr.push(parseFloat(entrie.value)));
+  return arr;
+}
+
+function getEntriesColors(entries) {
+  const arr = [];
+  const green = "rgba(0,194,146)";
+  entries.forEach((_) =>
+    arr.push(green));
+  return arr;
+}
+
+
+
 function _totalEntries(entries) {
   if (entries != null && entries.length != 0) {
-    if (entries.length == 1) return entries.value;
+    if (entries.length == 1) return entries[0].value;
     else
       return entries.reduce(
         (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value == undefined ? acc : acc.value)
@@ -502,7 +612,7 @@ function _totalEntries(entries) {
 
 function _totalExits(exits) {
   if (exits != null && exits.length != 0) {
-    if (exits.length == 1) return exits.value;
+    if (exits.length == 1) return exits[0].value;
     else
       return exits.reduce(
         (acc, cv) => parseFloat(cv.value) + parseFloat(acc.value == undefined ? acc : acc.value)
